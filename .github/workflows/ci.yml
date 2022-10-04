@@ -20,5 +20,7 @@ jobs:
         uses: actions/checkout@v2
       - name: Install lima
         run: brew install lima
-      - name: Test template
+      - name: Create VM from template
+        run: lima start --name=default nix.yml
+      - name: Test VM
         run: cd tests && lima direnv exec . hello
