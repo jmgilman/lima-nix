@@ -9,6 +9,16 @@ To use the template:
 limactl start --name=default https://raw.githubusercontent.com/jmgilman/lima-nix/master/nix.yml
 ```
 
+This template is optimized for use with [nix-direnv]. In a folder with a properly
+configured `.envrc` you should be able to run:
+
+```text
+lima
+```
+
+And you will (after a short time) be dropped into the appropriate development
+shell.
+
 ## Contributing
 
 Check out the [issues] for items needing attention or submit your own and
@@ -24,3 +34,4 @@ then:
 [issues]: https://github.com/jmgilman/lima-nix/issues
 [lima]: https://github.com/lima-vm/lima
 [nix]: https://nixos.org
+[nix-direnv]: https://github.com/nix-community/nix-direnv
