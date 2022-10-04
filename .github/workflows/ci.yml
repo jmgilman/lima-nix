@@ -19,6 +19,6 @@ jobs:
       - name: Checkout sources
         uses: actions/checkout@v2
       - name: Install lima
-        command: brew install lima
+        run: brew install lima
       - name: Test template
-        command: cd tests && lima direnv exec . hello
+        run: cd tests && lima direnv exec . hello
