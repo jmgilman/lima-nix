@@ -1,0 +1,111 @@
+images:
+- location: "https://cloud-images.ubuntu.com/releases/22.04/release-20220902/ubuntu-22.04-server-cloudimg-amd64.img"
+  arch: "x86_64"
+  digest: "sha256:c777670007cc5f132417b9e0bc01367ccfc2a989951ffa225bb1952917c3aa81"
+- location: "https://cloud-images.ubuntu.com/releases/22.04/release-20220902/ubuntu-22.04-server-cloudimg-arm64.img"
+  arch: "aarch64"
+  digest: "sha256:9620f479bd5a6cbf1e805654d41b27f4fc56ef20f916c8331558241734de81ae"
+- location: "https://cloud-images.ubuntu.com/releases/22.04/release/ubuntu-22.04-server-cloudimg-amd64.img"
+  arch: "x86_64"
+- location: "https://cloud-images.ubuntu.com/releases/22.04/release/ubuntu-22.04-server-cloudimg-arm64.img"
+  arch: "aarch64"
+
+mounts:
+- location: "~"
+  writable: true
+- location: "/tmp/lima"
+  writable: true
+
+containerd:
+  system: false
+  user: false
+
+provision:
+- mode: system
+  script: |
+    #!/bin/bash
+
+    set -euo pipefail
+
+    DOCKER_CONFIG=$(
+        cat <<EOF
+    [Socket]
+    SocketUser=${LIMA_CIDATA_USER}
+    EOF
+    )
+
+    # Install direnv
+    if ! dpkg -s direnv >&/dev/null; then
+        apt-get update && apt-get install -y direnv
+    fi
+
+    # Install Docker
+    if ! command -v docker &>/dev/null; then
+      mkdir -p /etc/systemd/system/docker.socket.d
+      echo "${DOCKER_CONFIG}" >/etc/systemd/system/docker.socket.d/override.conf
+
+      export DEBIAN_FRONTEND=noninteractive
+      curl -fsSL https://get.docker.com | sh
+    fi
+
+- mode: user
+  script: |
+    #!/bin/bash
+
+    set -euo pipefail
+
+    NIX_INSTALLER=https://nixos.org/nix/install
+    NIX_CONFIG=$(
+        cat <<'EOF'
+    sandbox = false
+    experimental-features = nix-command flakes
+    EOF
+    )
+    DIRENV_CONFIG=$(
+        cat <<'EOF'
+    [global]
+    warn_timeout = "10m"
+    [whitelist]
+    prefix = [ "/" ]
+    EOF
+    )
+    NIX_DIRENV=$(
+        cat <<'EOF'
+    if ! has nix_direnv_version || ! nix_direnv_version 2.1.1; then
+      source_url "https://raw.githubusercontent.com/nix-community/nix-direnv/2.1.1/direnvrc" "sha256-b6qJ4r34rbE23yWjMqbmu3ia2z4b2wIlZUksBke/ol0="
+    fi
+    EOF
+    )
+
+    # Install Nix
+    if ! command -v nix &>/dev/null; then
+        sh <(curl -L "${NIX_INSTALLER}") --daemon
+    fi
+
+    # Configure Nix
+    if [[ ! -d "${HOME}/.config/nix" ]]; then
+        mkdir -p "${HOME}/.config/nix"
+        echo "${NIX_CONFIG}" >"${HOME}/.config/nix/nix.conf"
+    fi
+
+    # Configure direnv
+    if [[ ! -d "$HOME/.config/direnv" ]]; then
+        mkdir -p "${HOME}/.config/direnv"
+        echo "${DIRENV_CONFIG}" >"${HOME}/.config/direnv/config.toml"
+        echo "${NIX_DIRENV}" >"${HOME}/.config/direnv/direnvrc"
+        echo 'eval "$(direnv hook bash)"' >>"${HOME}/.bashrc"
+    fi
+
+hostResolver:
+  hosts:
+    host.docker.internal: host.lima.internal
+portForwards:
+- guestSocket: "/var/run/docker.sock"
+  hostSocket: "{{.Dir}}/sock/docker.sock"
+message: |
+  To run `docker` on the host (assumes docker-cli is installed), run the following commands:
+  ------
+  docker context create lima-{{.Name}} --docker "host=unix://{{.Dir}}/sock/docker.sock"
+  docker context use lima-{{.Name}}
+  docker run hello-world
+  ------

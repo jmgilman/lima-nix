@@ -12,10 +12,12 @@
 This repository contains a [Lima] template that will create a Ubuntu
 VM with [nix] and [direnv] automatically installed and configured.
 
+## Usage
+
 To use the template:
 
 ```text
-limactl start --name=default https://raw.githubusercontent.com/jmgilman/lima-nix/v0.1.0/nix.yml
+limactl start --name=default https://raw.githubusercontent.com/jmgilman/lima-nix/v0.2.0/nix.yml
 ```
 
 This template is optimized for use with [nix-direnv]. In a folder with a
@@ -31,6 +33,15 @@ activated using the following:
 
 ```text
 lima direnv exec . <cmd>
+```
+
+### Docker
+
+A variant of the template is provided that installs and forwards Docker. To use
+it:
+
+```text
+limactl start --name=default https://raw.githubusercontent.com/jmgilman/lima-nix/v0.2.0/nix-docker.yml
 ```
 
 ## Contributing
