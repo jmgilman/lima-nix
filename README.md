@@ -1,5 +1,14 @@
 # lima-nix
 
+<p align="center">
+    <a href="https://github.com/jmgilman/lima-nix/releases">
+        <img src="https://img.shields.io/github/v/tag/jmgilman/lima-nix"/>
+    </a>
+    <a href="https://github.com/jmgilman/lima-nix/actions/workflows/ci.yml">
+        <img src="https://github.com/jmgilman/lima-nix/actions/workflows/ci.yml/badge.svg"/>
+    </a>
+</p>
+
 This repository contains a [Lima] template that will create a Ubuntu
 VM with [nix] and [direnv] automatically installed and configured.
 
@@ -9,8 +18,8 @@ To use the template:
 limactl start --name=default https://raw.githubusercontent.com/jmgilman/lima-nix/master/nix.yml
 ```
 
-This template is optimized for use with [nix-direnv]. In a folder with a properly
-configured `.envrc` you should be able to run:
+This template is optimized for use with [nix-direnv]. In a folder with a
+properly configured `.envrc` you should be able to run:
 
 ```text
 lima
