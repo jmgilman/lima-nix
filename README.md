@@ -17,7 +17,12 @@ lima
 ```
 
 And you will (after a short time) be dropped into the appropriate development
-shell.
+shell. Alternatively, you can directly run commands with the `direnv` context
+activated using the following:
+
+```text
+lima direnv exec . <cmd>
+```
 
 ## Contributing
 
