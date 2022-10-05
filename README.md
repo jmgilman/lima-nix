@@ -1,7 +1,7 @@
 # lima-nix
 
 <p align="center">
-    <a href="https://github.com/jmgilman/lima-nix/releases">
+    <a href="https://github.com/jmgilman/lima-nix/tags">
         <img src="https://img.shields.io/github/v/tag/jmgilman/lima-nix"/>
     </a>
     <a href="https://github.com/jmgilman/lima-nix/actions/workflows/ci.yml">
@@ -15,7 +15,7 @@ VM with [nix] and [direnv] automatically installed and configured.
 To use the template:
 
 ```text
-limactl start --name=default https://raw.githubusercontent.com/jmgilman/lima-nix/master/nix.yml
+limactl start --name=default https://raw.githubusercontent.com/jmgilman/lima-nix/v0.1.0/nix.yml
 ```
 
 This template is optimized for use with [nix-direnv]. In a folder with a
